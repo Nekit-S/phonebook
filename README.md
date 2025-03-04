@@ -5,7 +5,7 @@ REST API приложение для управления контактами �
 ## Технологии
 
 - Java 17
-- Spring Boot 3.4.3
+- Spring Boot 3.2.3
 - Spring Data JPA
 - PostgreSQL
 - Docker & Docker Compose
