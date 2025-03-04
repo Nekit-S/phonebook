@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,8 +57,8 @@ class UserServiceTest {
         UUID userId = UUID.randomUUID();
     
         // Настраиваем мокирование
-        when(userRepository.existsById(userId)).thenReturn(true);  // Важно: указываем что пользователь существует
-        doNothing().when(userRepository).deleteById(userId);       // Мокируем удаление
+        when(userRepository.existsById(userId)).thenReturn(true);
+        doNothing().when(userRepository).deleteById(userId);
     
         // Вызов метода
         userService.deleteUser(userId);
@@ -63,6 +66,25 @@ class UserServiceTest {
         // Проверки
         verify(userRepository, times(1)).existsById(userId);
         verify(userRepository, times(1)).deleteById(userId);
+    }
+
+    @Test
+    void testDeleteUser_ThrowsExceptionWhenUserNotFound() {
+        // Подготовка данных
+        UUID userId = UUID.randomUUID();
+    
+        // Настраиваем мокирование - пользователь не существует
+        when(userRepository.existsById(userId)).thenReturn(false);
+    
+        // Вызов метода и проверка исключения
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class, 
+            () -> userService.deleteUser(userId)
+        );
+        
+        assertTrue(exception.getMessage().contains("not found"));
+        verify(userRepository, times(1)).existsById(userId);
+        verify(userRepository, never()).deleteById(userId);
     }
 
     @Test
@@ -83,7 +105,7 @@ class UserServiceTest {
 
         // Мокируем вызовы репозитория
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(existingUser)).thenReturn(existingUser); // Передаем existingUser, а не updatedUserData
+        when(userRepository.save(existingUser)).thenReturn(existingUser);
 
         // Вызов метода
         User result = userService.updateUser(userId, updatedUserData);
@@ -120,6 +142,31 @@ class UserServiceTest {
     }
 
     @Test
+    void testGetAllUsersWithPagination() {
+        // Подготовка данных
+        User user1 = new User();
+        user1.setName("Иван Иванов");
+        user1.setEmail("ivan@example.com");
+
+        User user2 = new User();
+        user2.setName("Мария Сидорова");
+        user2.setEmail("maria@example.com");
+
+        List<User> userList = Arrays.asList(user1, user2);
+        Page<User> userPage = new PageImpl<>(userList);
+        
+        Pageable pageable = mock(Pageable.class);
+        when(userRepository.findAll(pageable)).thenReturn(userPage);
+
+        // Вызов метода
+        Page<User> result = userService.getAllUsers(pageable);
+
+        // Проверка результата
+        assertEquals(2, result.getContent().size());
+        verify(userRepository, times(1)).findAll(pageable);
+    }
+
+    @Test
     void testGetUserById() {
         // Подготовка данных
         UUID userId = UUID.randomUUID();
@@ -137,6 +184,23 @@ class UserServiceTest {
         assertNotNull(result);
         assertEquals("Иван Иванов", result.getName());
         assertEquals("ivan@example.com", result.getEmail());
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    void testGetUserById_ThrowsExceptionWhenUserNotFound() {
+        // Подготовка данных
+        UUID userId = UUID.randomUUID();
+        
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // Вызов метода и проверка исключения
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class, 
+            () -> userService.getUserById(userId)
+        );
+        
+        assertTrue(exception.getMessage().contains("not found"));
         verify(userRepository, times(1)).findById(userId);
     }
 }

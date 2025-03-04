@@ -3,20 +3,18 @@ package com.example.phonebook.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
-//import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Column;
 import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
-//import jakarta.persistence.*;
-//import org.hibernate.annotations.GenericGenerator;
-//import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @UuidGenerator(style = UuidGenerator.Style.RANDOM) // Новая аннотация
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
     private UUID id;
     
     @Column(nullable = false)
