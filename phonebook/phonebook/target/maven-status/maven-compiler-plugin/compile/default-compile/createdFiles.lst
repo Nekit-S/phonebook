@@ -1,5 +1,12 @@
-com\example\phonebook\controller\UserController.class
+com\example\phonebook\exception\UserNotFoundException.class
 com\example\phonebook\model\User.class
-com\example\phonebook\repository\UserRepository.class
+com\example\phonebook\mapper\UserMapper.class
 com\example\phonebook\service\UserService.class
+com\example\phonebook\controller\UserController.class
+com\example\phonebook\exception\ErrorResponse.class
+com\example\phonebook\dto\UserDto.class
 com\example\phonebook\PhonebookApplication.class
+com\example\phonebook\exception\GlobalExceptionHandler.class
+com\example\phonebook\dto\UserRequestDto.class
+com\example\phonebook\config\OpenApiConfig.class
+com\example\phonebook\repository\UserRepository.class
