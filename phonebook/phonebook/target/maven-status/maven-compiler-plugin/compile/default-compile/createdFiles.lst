@@ -1,0 +1,5 @@
+com\example\phonebook\controller\UserController.class
+com\example\phonebook\model\User.class
+com\example\phonebook\repository\UserRepository.class
+com\example\phonebook\service\UserService.class
+com\example\phonebook\PhonebookApplication.class
