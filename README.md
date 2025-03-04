@@ -26,7 +26,7 @@ REST API приложение для управления контактами �
 
 ```bash
 # Клонировать репозиторий
-git clone https://github.com/your-username/phonebook.git
+git clone https://github.com/Nekit-S//phonebook.git
 
 # Перейти в директорию проекта
 cd phonebook
